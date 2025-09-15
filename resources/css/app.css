@@ -1,0 +1,100 @@
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #121212;
+    color: #f1f1f1;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: radial-gradient(rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+/* Card do login */
+.login-card {
+    background-color: #1e1e1e;
+    padding: 3rem 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 0 20px rgba(0,0,0,0.7);
+    width: 100%;
+    max-width: 400px;
+    border: 1px solid #333;
+}
+
+/* Logo e título */
+.login-card h1 {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.login-card h1 span {
+    color: #ff6700; /* Laranja */
+}
+
+.login-card p.subtitle {
+    text-align: center;
+    color: #aaa;
+    margin-bottom: 2rem;
+}
+
+/* Inputs */
+.login-card input[type="email"],
+.login-card input[type="password"] {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid #444;
+    background-color: #2c2c2c;
+    color: #f1f1f1;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.login-card input:focus {
+    border-color: #ff6700;
+    box-shadow: 0 0 10px rgba(255, 103, 0, 0.5);
+}
+
+/* Botão */
+.login-card button {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background-color: #ff6700; /* Laranja */
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.login-card button:hover {
+    background-color: #e65c00;
+    box-shadow: 0 0 15px rgba(255, 103, 0, 0.5);
+}
+
+/* Link esqueci a senha */
+.login-card .forgot-link {
+    display: block;
+    text-align: center;
+    margin-top: 1.5rem;
+    color: #aaa;
+    text-decoration: none;
+    transition: color 0.2s ease-in-out;
+}
+
+.login-card .forgot-link:hover {
+    color: #ff6700;
+}
