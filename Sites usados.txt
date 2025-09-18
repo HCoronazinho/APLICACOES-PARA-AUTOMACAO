@@ -1,7 +1,0 @@
-Sites utilizados
-
-https://mermaid.live/
-
-https://www.plantuml.com/plantuml/
-
-https://dbdiagram.io/
