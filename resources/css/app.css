@@ -47,8 +47,9 @@ body {
 }
 
 /* Inputs */
-.login-card input[type="email"],
-.login-card input[type="password"] {
+.login-card input,
+input:not([type]),
+input[type="text"] {
     width: 100%;
     padding: 0.75rem 1rem;
     margin-bottom: 1.5rem;
@@ -97,4 +98,38 @@ body {
 
 .login-card .forgot-link:hover {
     color: #ff6700;
+}
+
+.profile-btn {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #ff7b00;
+    color: #fff;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    margin-left: 20px; /* ou ajuste conforme o layout */
+    transition: all 0.2s ease-in-out;
+}
+
+.profile-btn:hover {
+    background-color: #e65c00;
+}
+
+.logout-btn {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    padding: 10px 20px;
+    background-color: #ff3b3b;
+    color: #fff;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.2s ease-in-out;
+    z-index: 1000;
+}
+
+.logout-btn:hover {
+    background-color: #e63636;
 }
