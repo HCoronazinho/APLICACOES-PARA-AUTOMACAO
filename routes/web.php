@@ -24,5 +24,6 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
 
 Route::get('/dashboard/crimes', [CrimeController::class, 'index'])->name('dashboard.crimes');
 
+Route::get('/api/top-violent-cities', [CrimeController::class, 'topViolentCities']);
 
 Route::get('/api/top-cities', [CrimeController::class, 'topCities']);
