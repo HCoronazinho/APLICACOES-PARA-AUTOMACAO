@@ -196,22 +196,35 @@ class CrimeController extends Controller
     }
 
     public function topViolentCities()
-{
-    $rows = DB::table('crimes as c')
-        ->join('populacao_municipios as p', 'p.nome_municipio', '=', 'c.municipio_fato')
-        ->join('crimes_violentos as v', DB::raw('LOWER(TRIM(c.tipo_enquadramento))'), '=', DB::raw('LOWER(TRIM(v.crime_violento))'))
-        ->select(
-            'c.municipio_fato as municipio',
-            DB::raw('COUNT(*)::numeric / p.populacao_estimada::numeric * 100000 as crimes_por_100k'),
-            DB::raw('COUNT(*) as total_crimes'),
-            'p.populacao_estimada'
-        )
-        ->groupBy('c.municipio_fato', 'p.populacao_estimada')
-        ->orderByDesc('crimes_por_100k')
-        ->limit(10)
-        ->get();
+    {
+        $rows = DB::table('crimes as c')
+            ->join('populacao_municipios as p', 'p.nome_municipio', '=', 'c.municipio_fato')
+            ->join('crimes_violentos as v', DB::raw('LOWER(TRIM(c.tipo_enquadramento))'), '=', DB::raw('LOWER(TRIM(v.crime_violento))'))
+            ->select(
+                'c.municipio_fato as municipio',
+                DB::raw('COUNT(*)::numeric / p.populacao_estimada::numeric * 100000 as crimes_por_100k'),
+                DB::raw('COUNT(*) as total_crimes'),
+                'p.populacao_estimada'
+            )
+            ->groupBy('c.municipio_fato', 'p.populacao_estimada')
+            ->orderByDesc('crimes_por_100k')
+            ->limit(10)
+            ->get();
 
-    return response()->json($rows);
-}
+        return response()->json($rows);
+    }
 
+    public function getCrimesViolentosPorBairro()
+    {
+        $data = DB::table('crimes as c')
+            ->join('crimes_violentos as v', DB::raw('TRIM(UPPER(c.tipo_enquadramento))'), '=', DB::raw('TRIM(UPPER(v.crime_violento))'))
+            ->select('c.bairro_normalizado as bairro', DB::raw('COUNT(*) as total_crimes_violentos'))
+            ->where('c.municipio_fato', 'PORTO ALEGRE')
+            ->whereNotNull('c.bairro_normalizado')
+            ->groupBy('c.bairro_normalizado')
+            ->orderByDesc('total_crimes_violentos')
+            ->get();
+
+        return response()->json($data);
+    }
 }

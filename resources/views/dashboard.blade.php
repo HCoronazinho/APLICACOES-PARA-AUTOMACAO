@@ -104,6 +104,15 @@
         .logout-btn:hover {
             background-color: #e65c00;
         }
+
+        .dashboard-map {
+            width: 100%;
+            height: 900px;
+            border-radius: 12px;
+            box-shadow: 0px 0px 10px #0005;
+            background: #2b2b2b;
+            /* fallback enquanto o mapa carrega */
+        }
     </style>
 </head>
 
@@ -152,6 +161,12 @@
             <h2 style="color:#ff7b00; margin-bottom:16px;">Top 10 Cidades com mais Crimes Violentos per Capita</h2>
             <canvas id="topViolentCitiesChart" height="120"></canvas>
             <div id="chartErrorViolent" style="color:#f88;display:none;margin-top:12px"></div>
+        </div>
+
+        <!-- === MAPA === -->
+        <div class="chart-box" style="margin-top: 30px;">
+            <h2 style="color:#ff7b00; margin-bottom:16px;">Mapa de Ocorrências Violentas</h2>
+            <div id="map" class="dashboard-map"></div>
         </div>
     </div>
 
@@ -319,6 +334,129 @@
 
         document.addEventListener('DOMContentLoaded', loadTopViolentCitiesChart);
     </script>
+
+    <script>
+        function initMap() {
+            const rsCenter = {
+                lat: -30.0346,
+                lng: -51.2177
+            }; // Porto Alegre
+            const map = new google.maps.Map(document.getElementById("map"), {
+                center: rsCenter,
+                zoom: 12,
+                styles: [{
+                        elementType: "geometry",
+                        stylers: [{
+                            color: "#444444"
+                        }]
+                    },
+                    {
+                        elementType: "labels.text.stroke",
+                        stylers: [{
+                            color: "#2b2b2b"
+                        }]
+                    },
+                    {
+                        elementType: "labels.text.fill",
+                        stylers: [{
+                            color: "#f0f0f0"
+                        }]
+                    },
+                    {
+                        featureType: "administrative.locality",
+                        elementType: "labels.text.fill",
+                        stylers: [{
+                            color: "#ffffffff"
+                        }]
+                    },
+                    {
+                        featureType: "poi",
+                        elementType: "geometry",
+                        stylers: [{
+                            color: "#555555"
+                        }]
+                    },
+                    {
+                        featureType: "poi.park",
+                        elementType: "geometry",
+                        stylers: [{
+                            color: "#4a4a4a"
+                        }]
+                    },
+                    {
+                        featureType: "road",
+                        elementType: "geometry",
+                        stylers: [{
+                            color: "#666666"
+                        }]
+                    },
+                    {
+                        featureType: "water",
+                        elementType: "geometry",
+                        stylers: [{
+                            color: "#335577"
+                        }]
+                    }
+                ]
+            });
+
+            map.data.loadGeoJson('/bairros_poa.json');
+
+            async function addCrimeDataToMap(map) {
+                try {
+                    const res = await fetch('/api/crimes-violentos-por-bairro');
+                    const crimeData = await res.json();
+
+                    const crimeMap = {};
+                    crimeData.forEach(d => crimeMap[d.bairro.toUpperCase()] = +d.total_crimes_violentos);
+
+                    map.data.setStyle(feature => {
+                        const name = feature.getProperty('NOME').toUpperCase();
+                        const crimes = crimeMap[name] || 0;
+
+                        let color = '#00ff00'; // verde seguro
+                        if (crimes > 3000) color = '#ad0000ff'; // vermelho muito alto
+                        else if (crimes > 1000) color = '#ff9100ff'; // laranja mais alto
+                        else if (crimes > 500) color = '#ffae00ff'; // laranja alto
+                        else if (crimes > 100) color = '#fbff00ff'; // amarelo médio
+
+                        return {
+                            fillColor: color,
+                            strokeWeight: 1.5,
+                            strokeColor: '#222',
+                            fillOpacity: 0.8
+                        };
+                    });
+
+                    const infoWindow = new google.maps.InfoWindow();
+                    map.data.addListener('mouseover', event => {
+                        const name = event.feature.getProperty('NOME');
+                        const crimes = crimeMap[name.toUpperCase()] || 0;
+                        infoWindow.setContent(`
+                    <div style="color:#fff; background:#222; padding:8px; border-radius:6px;">
+                        <strong>${name}</strong><br>
+                        Crimes violentos: ${crimes}
+                    </div>
+                `);
+                        infoWindow.setPosition(event.latLng);
+                        infoWindow.open(map);
+                    });
+                    map.data.addListener('mouseout', () => infoWindow.close());
+
+                } catch (err) {
+                    console.error('Erro ao carregar dados de crimes:', err);
+                }
+            }
+
+            addCrimeDataToMap(map);
+        }
+    </script>
+
+
+    <script async
+        src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}&callback=initMap">
+    </script>
+
 </body>
 
 </html>
